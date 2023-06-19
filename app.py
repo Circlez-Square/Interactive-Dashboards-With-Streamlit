@@ -12,12 +12,13 @@ st.markdown(" This application is a Streamlit app used to analyze the sentiment 
 st.sidebar.markdown(" This application is a Streamlit app used to analyze the sentiment of the tweets 🐦 about US airlines ✈️ ")
 
 
-DATA_URL = ("/home/rhyme/Desktop/Project/Tweets.csv")
+DATA_URL = ("./Tweets.csv")
 
-@st.cache(persist=True)
+@st.cache_data(persist=True)
 def load_data():
     data = pd.read_csv(DATA_URL)
     data['tweet_created'] = pd.to_datetime(data['tweet_created'])
+    # print(type(data))
     return data
 
 data = load_data()
@@ -37,13 +38,13 @@ if not st.sidebar.checkbox('Hide', True):
         fig = px.bar(sentiment_count, x='Sentiment', y='Tweets', color = 'Tweets', height= 500)
         st.plotly_chart(fig)
     else:
-        fig = px.pie(sentiment_count, values='Tweets', names='Sentiment')
+        fig = px.pie(sentiment_count, values = 'Tweets', color = 'Sentiment' ,color_discrete_map = {'positive':123,'negative':234,'neutral':345} ,names='Sentiment')
         st.plotly_chart(fig)
 
 st.sidebar.subheader("When and where are the users tweeting from?")
 hour = st.sidebar.slider("Hour of day", 0, 23)
 modified_data = data[data['tweet_created'].dt.hour == hour]
-if not st.sidebar.checkbox("Close", True, key='1'):
+if not st.sidebar.checkbox("Close", True, key='2'):
     st.markdown("### Tweets location based on the time of the day")
     st.markdown("%i, tweets between %i:00 and %i:00" % (len(modified_data), hour, (hour+1)%24))
     st.map(modified_data)
